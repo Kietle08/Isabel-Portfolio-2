@@ -1,27 +1,29 @@
 (function () {
-  const logo = document.querySelector('.hero-logo');
+  const body = document.body;
+  const heroCarousel = document.getElementById('heroCarousel');
 
-  if (!logo || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!body || !heroCarousel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return;
   }
 
   let ticking = false;
 
-  function updateRotation() {
-    const rotation = window.scrollY * 0.25;
-    logo.style.transform = `rotate(${rotation}deg)`;
+  function syncLogoDockState() {
+    const dockTrigger = Math.max(120, heroCarousel.offsetHeight * 0.16);
+    body.classList.toggle('logo-in-nav', window.scrollY > dockTrigger);
     ticking = false;
   }
 
   function onScroll() {
     if (!ticking) {
-      window.requestAnimationFrame(updateRotation);
+      window.requestAnimationFrame(syncLogoDockState);
       ticking = true;
     }
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  updateRotation();
+  window.addEventListener('resize', onScroll);
+  syncLogoDockState();
 })();
 
 (function () {
