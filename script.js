@@ -91,3 +91,31 @@
     activeAudio.currentTime = 0;
   });
 })();
+
+(function () {
+  const contactForm = document.getElementById('contactForm');
+
+  if (!contactForm) {
+    return;
+  }
+
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const name = (document.getElementById('contactName')?.value || '').trim();
+    const email = (document.getElementById('contactEmail')?.value || '').trim();
+    const subjectInput = (document.getElementById('contactSubject')?.value || '').trim();
+    const message = (document.getElementById('contactMessage')?.value || '').trim();
+
+    const subject = subjectInput || 'Portfolio Inquiry';
+    const body = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      '',
+      message,
+    ].join('\n');
+
+    const mailtoUrl = `mailto:isabelcostallopes@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  });
+})();
