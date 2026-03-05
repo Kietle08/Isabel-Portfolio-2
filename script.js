@@ -92,3 +92,69 @@
   });
 })();
 
+(function () {
+  const contactForm = document.getElementById('contactForm');
+  const contactStatus = document.getElementById('contactStatus');
+
+  if (!contactForm || !contactStatus) {
+    return;
+  }
+
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const defaultButtonText = submitButton ? submitButton.textContent : '';
+
+  function setStatus(message, isError) {
+    contactStatus.textContent = message;
+    contactStatus.classList.remove('text-success', 'text-danger');
+    contactStatus.classList.add(isError ? 'text-danger' : 'text-success');
+  }
+
+  contactForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!contactForm.reportValidity()) {
+      return;
+    }
+
+    setStatus('', false);
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending...';
+    }
+
+    const formData = new FormData(contactForm);
+
+    if (!formData.get('_subject')) {
+      formData.set('_subject', 'Portfolio Inquiry');
+    }
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      const responseData = await response.json();
+      const isSuccess = response.ok && (responseData.success === true || responseData.success === 'true');
+
+      if (!isSuccess) {
+        throw new Error(responseData.message || 'Unable to send message right now.');
+      }
+
+      contactForm.reset();
+      setStatus('Message sent successfully. Thank you!', false);
+    } catch (error) {
+      setStatus('Message failed to send. Please email directly at isabelcostallopes@gmail.com.', true);
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = defaultButtonText;
+      }
+    }
+  });
+})();
+
