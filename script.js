@@ -101,7 +101,7 @@
   }
 
   const submitButton = contactForm.querySelector('button[type="submit"]');
-  const defaultButtonText = submitButton ? submitButton.textContent : '';
+  const recipient = contactForm.dataset.recipient || 'isabelcostallopes@gmail.com';
 
   function setStatus(message, isError) {
     contactStatus.textContent = message;
@@ -116,45 +116,33 @@
       return;
     }
 
-    setStatus('', false);
+    const name = (document.getElementById('contactName')?.value || '').trim();
+    const email = (document.getElementById('contactEmail')?.value || '').trim();
+    const subjectInput = (document.getElementById('contactSubject')?.value || '').trim();
+    const message = (document.getElementById('contactMessage')?.value || '').trim();
+
+    const subject = subjectInput || 'Portfolio Inquiry';
+    const body = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      '',
+      message,
+    ].join('\n');
+
+    const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent = 'Sending...';
     }
 
-    const formData = new FormData(contactForm);
+    window.location.href = mailtoUrl;
+    setStatus('Your email app should open with the message pre-filled.', false);
 
-    if (!formData.get('_subject')) {
-      formData.set('_subject', 'Portfolio Inquiry');
-    }
-
-    try {
-      const response = await fetch(contactForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-
-      const responseData = await response.json();
-      const isSuccess = response.ok && (responseData.success === true || responseData.success === 'true');
-
-      if (!isSuccess) {
-        throw new Error(responseData.message || 'Unable to send message right now.');
-      }
-
-      contactForm.reset();
-      setStatus('Message sent successfully. Thank you!', false);
-    } catch (error) {
-      setStatus('Message failed to send. Please email directly at isabelcostallopes@gmail.com.', true);
-    } finally {
+    window.setTimeout(() => {
       if (submitButton) {
         submitButton.disabled = false;
-        submitButton.textContent = defaultButtonText;
       }
-    }
+    }, 1200);
   });
 })();
 
