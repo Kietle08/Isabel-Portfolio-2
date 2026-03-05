@@ -169,7 +169,14 @@
 
       <section id="contact" aria-labelledby="contact-title">
         <h2 id="contact-title">Contact</h2>
-        <form id="contactForm" class="row g-3">
+        <form
+          id="contactForm"
+          class="row g-3"
+          action="https://formsubmit.co/isabelcostallopes@gmail.com"
+          method="POST"
+        >
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
           <div class="col-md-6">
             <label for="contactName" class="form-label">Name</label>
             <input type="text" class="form-control" id="contactName" name="name" required>
@@ -180,7 +187,7 @@
           </div>
           <div class="col-12">
             <label for="contactSubject" class="form-label">Subject</label>
-            <input type="text" class="form-control" id="contactSubject" name="subject">
+            <input type="text" class="form-control" id="contactSubject" name="_subject">
           </div>
           <div class="col-12">
             <label for="contactMessage" class="form-label">Message</label>
